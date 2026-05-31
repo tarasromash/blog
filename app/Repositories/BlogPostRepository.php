@@ -16,8 +16,6 @@ class BlogPostRepository extends CoreRepository
 
     /**
      * Отримати список статей
-     *
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function getAllWithPaginate()
     {
@@ -35,6 +33,12 @@ class BlogPostRepository extends CoreRepository
             ->startConditions()
             ->select($columns)
             ->orderBy('id', 'DESC')
+            ->with([
+                'category' => function ($query) {
+                    $query->select(['id', 'title']);
+                },
+                'user:id,name',
+            ])
             ->paginate(25);
 
         return $result;
@@ -42,9 +46,6 @@ class BlogPostRepository extends CoreRepository
 
     /**
      * Отримати модель для редагування в адмінці
-     *
-     * @param int $id
-     * @return Model|null
      */
     public function getEdit($id)
     {
