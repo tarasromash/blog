@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\Blog\Admin;
 
-// use App\Http\Controllers\Controller;
+use App\Http\Requests\BlogCategoryCreateRequest;
+use App\Http\Requests\BlogCategoryUpdateRequest;
 use App\Models\BlogCategory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class CategoryController extends BaseController
@@ -14,8 +14,6 @@ class CategoryController extends BaseController
      */
     public function index()
     {
-        // dd(__METHOD__);
-
         $paginator = BlogCategory::paginate(5);
 
         return $paginator;
@@ -24,18 +22,9 @@ class CategoryController extends BaseController
     /**
      * Створення нової категорії.
      */
-    public function store(Request $request)
+    public function store(BlogCategoryCreateRequest $request)
     {
-        // dd(__METHOD__);
-
-        $data = $request->all();
-
-        if (empty($data['title'])) {
-            return [
-                'success' => false,
-                'message' => 'Поле title є обовʼязковим',
-            ];
-        }
+        $data = $request->input();
 
         if (empty($data['slug'])) {
             $data['slug'] = Str::slug($data['title']);
@@ -46,24 +35,22 @@ class CategoryController extends BaseController
         if ($item) {
             return [
                 'success' => true,
-                'message' => 'Категорію успішно створено',
+                'message' => 'Успішно збережено',
                 'data' => $item,
             ];
         }
 
         return [
             'success' => false,
-            'message' => 'Помилка створення категорії',
+            'message' => 'Помилка збереження',
         ];
     }
 
     /**
      * Оновлення категорії.
      */
-    public function update(Request $request, $id)
+    public function update(BlogCategoryUpdateRequest $request, $id)
     {
-        // dd(__METHOD__);
-
         $item = BlogCategory::find($id);
 
         if (empty($item)) {
@@ -73,7 +60,7 @@ class CategoryController extends BaseController
             ];
         }
 
-        $data = $request->all();
+        $data = $request->input();
 
         if (empty($data['slug']) && !empty($data['title'])) {
             $data['slug'] = Str::slug($data['title']);
