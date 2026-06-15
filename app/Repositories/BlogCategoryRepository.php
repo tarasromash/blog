@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\BlogCategory as Model;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class BlogCategoryRepository.
@@ -17,9 +16,6 @@ class BlogCategoryRepository extends CoreRepository
 
     /**
      * Отримати модель для редагування в адмінці
-     *
-     * @param int $id
-     * @return Model|null
      */
     public function getEdit($id)
     {
@@ -27,9 +23,7 @@ class BlogCategoryRepository extends CoreRepository
     }
 
     /**
-     * Отримати список категорій для виводу в випадаючий список
-     *
-     * @return Collection|\Illuminate\Support\Collection
+     * Отримати список категорій для випадаючого списку
      */
     public function getForComboBox()
     {
@@ -51,9 +45,6 @@ class BlogCategoryRepository extends CoreRepository
 
     /**
      * Отримати категорії для виводу пагінатором
-     *
-     * @param int|null $perPage
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function getAllWithPaginate($perPage = null)
     {
@@ -62,6 +53,9 @@ class BlogCategoryRepository extends CoreRepository
         $result = $this
             ->startConditions()
             ->select($columns)
+            ->with([
+                'parentCategory:id,title',
+            ])
             ->paginate($perPage);
 
         return $result;
