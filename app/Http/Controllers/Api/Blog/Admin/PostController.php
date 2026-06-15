@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\Blog\Admin;
 
 use App\Http\Requests\BlogPostCreateRequest;
 use App\Http\Requests\BlogPostUpdateRequest;
+use App\Jobs\BlogPostAfterCreateJob;
+use App\Jobs\BlogPostAfterDeleteJob;
 use App\Models\BlogPost;
 use App\Repositories\BlogCategoryRepository;
 use App\Repositories\BlogPostRepository;
@@ -31,6 +33,8 @@ class PostController extends BaseController
         $item = (new BlogPost())->create($data);
 
         if ($item) {
+            BlogPostAfterCreateJob::dispatch($item);
+
             return [
                 'success' => 'Успішно збережено',
             ];
@@ -72,6 +76,8 @@ class PostController extends BaseController
         $result = BlogPost::destroy($id);
 
         if ($result) {
+            BlogPostAfterDeleteJob::dispatch($id)->delay(20);
+
             return [];
         }
 
