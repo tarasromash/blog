@@ -26,6 +26,23 @@ class PostController extends BaseController
         return $paginator;
     }
 
+    public function show(string $id)
+    {
+        $item = $this->blogPostRepository->getShow($id);
+
+        if (empty($item)) {
+            return response()->json([
+                'success' => false,
+                'message' => "Запис id=[{$id}] не знайдено",
+            ], 404);
+        }
+
+        return [
+            'success' => true,
+            'data' => $item,
+        ];
+    }
+
     public function store(BlogPostCreateRequest $request)
     {
         $data = $request->input();

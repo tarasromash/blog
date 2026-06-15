@@ -18,7 +18,6 @@ Route::prefix('admin/blog')->group(function () {
         ->names('blog.admin.categories');
 
     Route::apiResource('posts', AdminPostController::class)
-        ->except(['show'])
         ->names('blog.admin.posts');
 });
 

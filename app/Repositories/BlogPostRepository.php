@@ -4,9 +4,6 @@ namespace App\Repositories;
 
 use App\Models\BlogPost as Model;
 
-/**
- * Class BlogPostRepository.
- */
 class BlogPostRepository extends CoreRepository
 {
     protected function getModelClass()
@@ -14,9 +11,6 @@ class BlogPostRepository extends CoreRepository
         return Model::class;
     }
 
-    /**
-     * Отримати список статей
-     */
     public function getAllWithPaginate()
     {
         $columns = [
@@ -44,11 +38,35 @@ class BlogPostRepository extends CoreRepository
         return $result;
     }
 
-    /**
-     * Отримати модель для редагування в адмінці
-     */
     public function getEdit($id)
     {
         return $this->startConditions()->find($id);
+    }
+
+    public function getShow($id)
+    {
+        $columns = [
+            'id',
+            'title',
+            'slug',
+            'excerpt',
+            'content_raw',
+            'content_html',
+            'is_published',
+            'published_at',
+            'user_id',
+            'category_id',
+        ];
+
+        $result = $this
+            ->startConditions()
+            ->select($columns)
+            ->with([
+                'category:id,title',
+                'user:id,name',
+            ])
+            ->find($id);
+
+        return $result;
     }
 }
